@@ -24,14 +24,12 @@ public class Tutor {
     @Column(nullable = false)
     private String name;
 
-    @CPF
     @Column(nullable = false, unique = true)
     private String cpf;
 
     @Column(nullable = false)
     private String contact;
 
-    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
