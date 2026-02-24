@@ -1,6 +1,7 @@
 package com.jamillyferreira.veterinaryclinic.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -32,13 +33,13 @@ public class GlobalExceptionHandler {
 
         ValidationErrorResponse response = new ValidationErrorResponse(
                 Instant.now(),
-                HttpStatus.UNPROCESSABLE_CONTENT.value(),
+                HttpStatus.BAD_REQUEST.value(),
                 "Validação falhou",
                 errors,
                 request.getRequestURI()
         );
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -68,6 +69,22 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(
+            DataIntegrityViolationException ex, HttpServletRequest request) {
+
+        ErrorResponse err = new ErrorResponse(
+                Instant.now(),
+                HttpStatus.CONFLICT.value(),
+                "Conflict",
+                "Recurso já cadastrado",
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
+
     }
 
 
