@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -32,7 +33,7 @@ public class Pet {
     private Double weight;
 
     @Column(nullable = false)
-    private Date dateBirth;
+    private LocalDate dateBirth;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id", nullable = false)
