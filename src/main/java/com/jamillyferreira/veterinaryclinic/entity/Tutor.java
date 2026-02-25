@@ -36,6 +36,13 @@ public class Tutor {
     @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
     private List<Pet> pets = new ArrayList<>();
 
+    public Tutor(String name, String cpf, String contact, String email) {
+        this.name = name;
+        this.cpf = cpf;
+        this.contact = contact;
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
