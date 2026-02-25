@@ -4,8 +4,10 @@ import com.jamillyferreira.veterinaryclinic.dto.pet.PetCreateDTO;
 import com.jamillyferreira.veterinaryclinic.dto.pet.PetResponseDTO;
 import com.jamillyferreira.veterinaryclinic.dto.pet.PetUpdateDTO;
 import com.jamillyferreira.veterinaryclinic.entity.Pet;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class PetMapper {
     public Pet toEntity(PetCreateDTO dto) {
@@ -19,6 +21,13 @@ public class PetMapper {
     }
 
     public PetResponseDTO toDTO(Pet pet) {
+
+        if (pet.getTutor() == null) {
+            log.warn("Pet ID {} está sem tutor associado", pet.getId());
+        }
+        Long tutorId = pet.getTutor() != null ? pet.getTutor().getId() : null;
+        String tutorName = pet.getTutor() != null ? pet.getTutor().getName() : null;
+
         return new PetResponseDTO(
                 pet.getId(),
                 pet.getName(),
@@ -26,8 +35,8 @@ public class PetMapper {
                 pet.getRace(),
                 pet.getWeight(),
                 pet.getDateBirth(),
-                pet.getTutor().getId(),
-                pet.getTutor().getName()
+                tutorId,
+                tutorName
         );
     }
 
