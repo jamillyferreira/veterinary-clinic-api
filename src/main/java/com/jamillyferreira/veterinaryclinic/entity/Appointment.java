@@ -1,6 +1,6 @@
 package com.jamillyferreira.veterinaryclinic.entity;
 
-import com.jamillyferreira.veterinaryclinic.enums.ConsultationStatus;
+import com.jamillyferreira.veterinaryclinic.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "consultation")
-public class Consultation {
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,5 +37,5 @@ public class Consultation {
     private String observations;
 
     @Enumerated(EnumType.STRING)
-    private ConsultationStatus status = ConsultationStatus.AGENDADA;
+    private AppointmentStatus status = AppointmentStatus.AGENDADA;
 }

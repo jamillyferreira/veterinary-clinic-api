@@ -1,6 +1,6 @@
 package com.jamillyferreira.veterinaryclinic.enums;
 
-public enum ConsultationStatus {
+public enum AppointmentStatus {
     AGENDADA,
     EM_ATENDIMENTO,
     CONCLUIDA,
