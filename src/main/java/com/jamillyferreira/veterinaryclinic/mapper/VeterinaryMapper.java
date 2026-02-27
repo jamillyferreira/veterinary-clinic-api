@@ -2,6 +2,7 @@ package com.jamillyferreira.veterinaryclinic.mapper;
 
 import com.jamillyferreira.veterinaryclinic.dto.veterinary.VeterinaryCreateDTO;
 import com.jamillyferreira.veterinaryclinic.dto.veterinary.VeterinaryResponseDTO;
+import com.jamillyferreira.veterinaryclinic.dto.veterinary.VeterinarySummaryDTO;
 import com.jamillyferreira.veterinaryclinic.dto.veterinary.VeterinaryUpdateDTO;
 import com.jamillyferreira.veterinaryclinic.entity.Veterinary;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,13 @@ public class VeterinaryMapper {
                 veterinary.getContact(),
                 veterinary.getSpecialty(),
                 veterinary.isActive()
+        );
+    }
+
+    public VeterinarySummaryDTO summaryDTO(Veterinary veterinary) {
+        return new VeterinarySummaryDTO(
+                veterinary.getId(),
+                veterinary.getName()
         );
     }
 
