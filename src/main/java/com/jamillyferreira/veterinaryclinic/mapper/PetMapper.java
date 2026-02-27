@@ -41,7 +41,7 @@ public class PetMapper {
         );
     }
 
-    public PetSummaryDTO summaryDTO(Pet pet) {
+    public PetSummaryDTO toSummaryDTO(Pet pet) {
         return new PetSummaryDTO(
                 pet.getId(),
                 pet.getName(),

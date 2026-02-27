@@ -31,7 +31,7 @@ public class VeterinaryMapper {
         );
     }
 
-    public VeterinarySummaryDTO summaryDTO(Veterinary veterinary) {
+    public VeterinarySummaryDTO toSummaryDTO(Veterinary veterinary) {
         return new VeterinarySummaryDTO(
                 veterinary.getId(),
                 veterinary.getName()
