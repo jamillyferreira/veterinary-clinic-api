@@ -8,13 +8,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "consultation")
+@Table(name = "appointment")
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +30,24 @@ public class Appointment {
     @JoinColumn(name = "pet_id")
     private Pet pet;
 
-    private LocalDateTime scheduledAt;
-    private String reason;
+    @Column(nullable = false)
+    private OffsetDateTime scheduledAt;
 
     @Column(nullable = false)
-    private String diagnosis;
-
-    private String observations;
+    private String reason;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status = AppointmentStatus.AGENDADA;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Appointment that = (Appointment) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }
