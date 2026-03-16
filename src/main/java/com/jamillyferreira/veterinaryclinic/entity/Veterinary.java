@@ -37,7 +37,7 @@ public class Veterinary {
     private Specialty specialty;
 
     @OneToMany(mappedBy = "veterinary", fetch = FetchType.LAZY)
-    private List<Consultation> consultations = new ArrayList<>();
+    private List<Appointment> appointments = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean active = true;

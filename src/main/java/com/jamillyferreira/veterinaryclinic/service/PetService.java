@@ -8,12 +8,11 @@ import com.jamillyferreira.veterinaryclinic.entity.Tutor;
 import com.jamillyferreira.veterinaryclinic.exception.BusinessException;
 import com.jamillyferreira.veterinaryclinic.exception.ResourceNotFoundException;
 import com.jamillyferreira.veterinaryclinic.mapper.PetMapper;
-import com.jamillyferreira.veterinaryclinic.repository.ConsultationRepository;
+import com.jamillyferreira.veterinaryclinic.repository.AppointmentRepository;
 import com.jamillyferreira.veterinaryclinic.repository.PetRepository;
 import com.jamillyferreira.veterinaryclinic.repository.TutorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.List;
 public class PetService {
     private final PetRepository petRepository;
     private final TutorRepository tutorRepository;
-    private final ConsultationRepository consultationRepository;
+    private final AppointmentRepository appointmentRepository;
     private final PetMapper mapper;
 
     public PetResponseDTO create(PetCreateDTO dto) {
@@ -101,7 +100,7 @@ public class PetService {
                     return new ResourceNotFoundException("Pet não encontrado com ID: " + id);
                 });
 
-        if (consultationRepository.existsByPetId(id)) {
+        if (appointmentRepository.existsByPetId(id)) {
             log.error("Pet possui consultas registradas - ID: {}", id);
             throw new BusinessException("Pet não pode ser removido pois possui consultadas registradas.");
         }

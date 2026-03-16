@@ -2,6 +2,7 @@ package com.jamillyferreira.veterinaryclinic.mapper;
 
 import com.jamillyferreira.veterinaryclinic.dto.pet.PetCreateDTO;
 import com.jamillyferreira.veterinaryclinic.dto.pet.PetResponseDTO;
+import com.jamillyferreira.veterinaryclinic.dto.pet.PetSummaryDTO;
 import com.jamillyferreira.veterinaryclinic.dto.pet.PetUpdateDTO;
 import com.jamillyferreira.veterinaryclinic.entity.Pet;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,14 @@ public class PetMapper {
                 pet.getDateBirth(),
                 tutorId,
                 tutorName
+        );
+    }
+
+    public PetSummaryDTO toSummaryDTO(Pet pet) {
+        return new PetSummaryDTO(
+                pet.getId(),
+                pet.getName(),
+                pet.getSpecies()
         );
     }
 
