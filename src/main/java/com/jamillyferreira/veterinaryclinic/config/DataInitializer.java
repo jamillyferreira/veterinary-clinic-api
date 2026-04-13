@@ -1,9 +1,12 @@
 package com.jamillyferreira.veterinaryclinic.config;
 
+import com.jamillyferreira.veterinaryclinic.entity.Appointment;
 import com.jamillyferreira.veterinaryclinic.entity.Pet;
 import com.jamillyferreira.veterinaryclinic.entity.Tutor;
 import com.jamillyferreira.veterinaryclinic.entity.Veterinary;
+import com.jamillyferreira.veterinaryclinic.enums.AppointmentStatus;
 import com.jamillyferreira.veterinaryclinic.enums.Specialty;
+import com.jamillyferreira.veterinaryclinic.repository.AppointmentRepository;
 import com.jamillyferreira.veterinaryclinic.repository.PetRepository;
 import com.jamillyferreira.veterinaryclinic.repository.TutorRepository;
 import com.jamillyferreira.veterinaryclinic.repository.VeterinaryRepository;
@@ -12,6 +15,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Configuration
@@ -20,6 +25,7 @@ public class DataInitializer implements CommandLineRunner {
     private final VeterinaryRepository veterinaryRepository;
     private final TutorRepository tutorRepository;
     private final PetRepository petRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -68,6 +74,55 @@ public class DataInitializer implements CommandLineRunner {
                 ));
             }
         }
+
+        if (appointmentRepository.count() == 0) {
+
+            List<Veterinary> vets = veterinaryRepository.findAll();
+            List<Pet> pets = petRepository.findAll();
+
+            if (!vets.isEmpty() && !pets.isEmpty()) {
+
+                appointmentRepository.saveAll(List.of(
+
+                        // COMPLETA (com diagnosis + observations)
+                        new Appointment(
+                                null,
+                                vets.get(0),
+                                pets.get(0),
+                                LocalDateTime.now().plusDays(1),
+                                "Consulta de rotina",
+                                "Animal saudável",
+                                "Sem alterações clínicas. Recomendado retorno em 6 meses.",
+                                AppointmentStatus.CONCLUIDA
+                        ),
+
+                        // COMPLETA
+                        new Appointment(
+                                null,
+                                vets.get(2),
+                                pets.get(1),
+                                LocalDateTime.now().plusDays(2),
+                                "Dor na pata",
+                                "Inflamação leve",
+                                "Prescrito anti-inflamatório por 5 dias.",
+                                AppointmentStatus.CONCLUIDA
+                        ),
+
+                        // SEM diagnosis/observations (fluxo inicial)
+                        new Appointment(
+                                null,
+                                vets.get(1),
+                                pets.get(2),
+                                LocalDateTime.now().plusDays(3),
+                                "Check-up anual",
+                                null,
+                                null,
+                                AppointmentStatus.EM_ATENDIMENTO
+                        )
+                ));
+            }
+        }
+
 
 
     }

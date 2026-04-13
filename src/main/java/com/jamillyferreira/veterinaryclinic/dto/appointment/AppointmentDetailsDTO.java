@@ -4,6 +4,7 @@ import com.jamillyferreira.veterinaryclinic.dto.pet.PetSummaryDTO;
 import com.jamillyferreira.veterinaryclinic.dto.veterinary.VeterinarySummaryDTO;
 import com.jamillyferreira.veterinaryclinic.enums.AppointmentStatus;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 public record AppointmentDetailsDTO(
@@ -14,7 +15,7 @@ public record AppointmentDetailsDTO(
         String diagnosis,
         String observations,
         AppointmentStatus status,
-        OffsetDateTime scheduledAt
+        LocalDateTime scheduledAt
 
 ) {
 }

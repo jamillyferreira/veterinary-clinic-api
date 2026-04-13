@@ -1,6 +1,7 @@
 package com.jamillyferreira.veterinaryclinic.mapper;
 
 import com.jamillyferreira.veterinaryclinic.dto.appointment.AppointmentCreateDTO;
+import com.jamillyferreira.veterinaryclinic.dto.appointment.AppointmentDetailsDTO;
 import com.jamillyferreira.veterinaryclinic.dto.appointment.AppointmentResponseDTO;
 import com.jamillyferreira.veterinaryclinic.dto.appointment.AppointmentSummaryDTO;
 import com.jamillyferreira.veterinaryclinic.entity.Appointment;
@@ -8,6 +9,7 @@ import com.jamillyferreira.veterinaryclinic.enums.AppointmentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Component
@@ -30,7 +32,20 @@ public class AppointmentMapper {
         return new AppointmentSummaryDTO(
                 appointment.getId(),
                 appointment.getStatus(),
-                OffsetDateTime.now()
+                LocalDateTime.now()
+        );
+    }
+
+    public AppointmentDetailsDTO toDetailsDTO (Appointment appointment) {
+        return new AppointmentDetailsDTO(
+                appointment.getId(),
+                petMapper.toSummaryDTO(appointment.getPet()),
+                veterinaryMapper.toSummaryDTO(appointment.getVeterinary()),
+                appointment.getReason(),
+                appointment.getDiagnosis(),
+                appointment.getObservations(),
+                appointment.getStatus(),
+                appointment.getScheduledAt()
         );
     }
 

@@ -1,8 +1,6 @@
 package com.jamillyferreira.veterinaryclinic.service;
 
-import com.jamillyferreira.veterinaryclinic.dto.appointment.AppointmentCreateDTO;
-import com.jamillyferreira.veterinaryclinic.dto.appointment.AppointmentResponseDTO;
-import com.jamillyferreira.veterinaryclinic.dto.appointment.AppointmentSummaryDTO;
+import com.jamillyferreira.veterinaryclinic.dto.appointment.*;
 import com.jamillyferreira.veterinaryclinic.entity.Appointment;
 import com.jamillyferreira.veterinaryclinic.entity.Pet;
 import com.jamillyferreira.veterinaryclinic.entity.Veterinary;
@@ -14,12 +12,14 @@ import com.jamillyferreira.veterinaryclinic.mapper.AppointmentMapper;
 import com.jamillyferreira.veterinaryclinic.repository.AppointmentRepository;
 import com.jamillyferreira.veterinaryclinic.repository.PetRepository;
 import com.jamillyferreira.veterinaryclinic.repository.VeterinaryRepository;
+import com.jamillyferreira.veterinaryclinic.specification.AppointmentSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -35,10 +35,10 @@ public class AppointmentService {
     @Transactional
     public AppointmentResponseDTO create(AppointmentCreateDTO dto) {
 
-        OffsetDateTime scheduledAt = dto.scheduledAt();
-        OffsetDateTime end = scheduledAt.plusMinutes(APPOINTMENT_DURATION_MINUTES);
+        LocalDateTime scheduledAt = dto.scheduledAt();
+        LocalDateTime end = scheduledAt.plusMinutes(APPOINTMENT_DURATION_MINUTES);
 
-        if (!scheduledAt.isAfter(OffsetDateTime.now())) {
+        if (!scheduledAt.isAfter(LocalDateTime.now())) {
             throw new BusinessException("A consulta deve ser agendada para uma data futura");
         }
 
@@ -80,110 +80,86 @@ public class AppointmentService {
 
     }
 
-    public List<AppointmentResponseDTO> findAll() {
-        log.info("Buscando todas as consultas");
-        List<Appointment> appointments = appointmentRepository.findAll();
+    public List<AppointmentResponseDTO> findAll(
+            Long petId,
+            Long veterinaryId,
+            AppointmentStatus status
+    ) {
+            log.info("Buscando consultas");
 
-        log.info("Consultas encontradas - Quantidade: {}", appointments.size());
-        return appointments.stream().map(mapper::toDTO).toList();
+            if (petId != null && !petRepository.existsById(petId)) {
+                throw new ResourceNotFoundException("Pet não encontrado com ID: " + petId);
+            }
+
+            if (veterinaryId != null && !veterinaryRepository.existsById(veterinaryId)) {
+                throw new ResourceNotFoundException("Veterinário não encontrado com ID: " + veterinaryId);
+            }
+
+            Specification<Appointment> spec = AppointmentSpecification.withFilters(petId, veterinaryId, status);
+            List<Appointment> appointments = appointmentRepository.findAll(spec);
+
+            log.info("Consultas encontradas - Quantidade: {}", appointments.size());
+            return appointments.stream().map(mapper::toDTO).toList();
     }
 
-    public List<AppointmentResponseDTO> findByPetId(Long petId) {
-        log.info("Buscando consultas por Pet com ID: {}", petId);
-
-        if (!petRepository.existsById(petId)) {
-            log.error("Pet não encontrado com ID: {}", petId);
-            throw new ResourceNotFoundException("Pet não encontrado com ID: " + petId);
-        }
-
-        List<Appointment> appointments = appointmentRepository.findByPetId(petId);
-
-        return appointments.stream().map(mapper::toDTO).toList();
-    }
-
-    public List<AppointmentResponseDTO> findByVeterinaryId(Long veterinaryId) {
-        log.info("Buscando consultas por veterinário com ID: {}", veterinaryId);
-
-        if (!veterinaryRepository.existsById(veterinaryId)) {
-            log.error("Veterinário não encontrado com ID: {}", veterinaryId);
-            throw new ResourceNotFoundException("Veterinário não encontrado com ID: " + veterinaryId);
-        }
-
-        List<Appointment> appointments = appointmentRepository.findByVeterinaryId(veterinaryId);
-
-        return appointments.stream().map(mapper::toDTO).toList();
-    }
-
-    public List<AppointmentResponseDTO> findByStatus(AppointmentStatus status) {
-        log.info("Buscando consultas por status: {}", status);
-
-        List<AppointmentResponseDTO> appointments = appointmentRepository.findByStatus(status)
-                .stream()
-                .map(mapper::toDTO)
-                .toList();
-
-        log.info("Consultas encontradas - Quantidade: {}", appointments.size());
-        return appointments;
-    }
-
-    public AppointmentResponseDTO findById(Long id) {
+    public AppointmentDetailsDTO findById(Long id) {
         log.info("Buscando consultas por ID: {}", id);
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("Consulta não encontrado com ID: {}", id);
+                    log.warn("Consulta não encontrado com ID: {}", id);
                     return new ResourceNotFoundException("Consulta não encontrado com ID: " + id);
                 });
 
         log.info("Consulta retornada - ID: {}", appointment.getId());
-        return mapper.toDTO(appointment);
+        return mapper.toDetailsDTO(appointment);
 
     }
 
-    public AppointmentResponseDTO updateStatus(Long id, AppointmentStatus newStatus) {
-        log.info("Atualizando status da consulta id: {} para {}", id, newStatus);
+    public AppointmentResponseDTO updateStatus(Long id, AppointmentStatusUpdateDTO dto) {
+        log.info("Atualizando status da consulta id: {} para {}", id, dto.status());
 
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("Consulta não encontrada com id: " + id);
+                    log.warn("Consulta não encontrada com id: {}", id);
                     return new ResourceNotFoundException("Consulta não encontrada com id: " + id);
                 });
 
         AppointmentStatus currentStatus = appointment.getStatus();
 
-        if (!currentStatus.canTransitionTo(newStatus)) {
-            throw new InvalidStatusTransitionException(String.format(
-                    "Transição inválida: %s -> %s. Transições permitidas: %s",
-                    currentStatus, newStatus, currentStatus.nextAllowed()
-            ));
+        if (!currentStatus.canTransitionTo(dto.status())) {
+            throw new InvalidStatusTransitionException("Transição inválida");
         }
 
-        appointment.setStatus(newStatus);
+        appointment.setStatus(dto.status());
         Appointment updated = appointmentRepository.save(appointment);
 
-        log.info("Status atualizado com sucesso - ID: {} {} -> {}", id, currentStatus, newStatus);
+        log.info("Status atualizado com sucesso - ID: {} {} -> {}", id, currentStatus, dto.status());
         return mapper.toDTO(updated);
     }
 
-    public AppointmentSummaryDTO cancelAppointment(Long id) {
-        log.info("Cancelando consulta com ID: {}", id);
-
+    @Transactional
+    public AppointmentDetailsDTO concludeAppointment(Long id, ClinicalDataInputDTO dto) {
+        log.info("Adicionando diagnóstico para consulta por ID: {}", id);
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("Consulta não encontrada com ID: {}", id);
+                    log.warn("Consulta não encontrada com ID: {}", id);
                     return new ResourceNotFoundException("Consulta não encontrada com ID: " + id);
                 });
 
-        AppointmentStatus currentStatus = appointment.getStatus();
-
-        if (!currentStatus.canTransitionTo(AppointmentStatus.CANCELADA)) {
-            throw new BusinessException("Consulta não pode ser cancelada. Status atual: " + currentStatus);
+        if (appointment.getStatus() != AppointmentStatus.EM_ATENDIMENTO) {
+            log.warn("Tentativa de adicionar diagnóstico em consulta com status: {}", appointment.getStatus());
+            throw new BusinessException("Status atual não permite adição de diagnóstico.");
         }
 
-        appointment.setStatus(AppointmentStatus.CANCELADA);
-        Appointment updated = appointmentRepository.save(appointment);
+        appointment.setDiagnosis(dto.diagnosis());
+        appointment.setObservations(dto.observations());
+        appointment.setStatus(AppointmentStatus.CONCLUIDA);
 
-        log.info("Consulta cancelada com sucesso - ID: {}", id);
-        return mapper.toSummaryDTO(updated);
+        Appointment updated = appointmentRepository.save(appointment);
+        log.info("Diagnóstico registrado - consulta ID: {} concluída", id);
+
+        return mapper.toDetailsDTO(updated);
     }
+
 
 }
