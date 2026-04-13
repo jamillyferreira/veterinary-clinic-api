@@ -7,12 +7,15 @@ import com.jamillyferreira.veterinaryclinic.enums.AppointmentStatus;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
-public record AppointmentResponseDTO(
+public record AppointmentDetailsDTO(
         Long id,
         PetSummaryDTO pet,
         VeterinarySummaryDTO veterinary,
         String reason,
+        String diagnosis,
+        String observations,
         AppointmentStatus status,
         LocalDateTime scheduledAt
+
 ) {
 }

@@ -12,7 +12,7 @@ public enum AppointmentStatus {
     EM_ATENDIMENTO {
         @Override
         public Set<AppointmentStatus> nextAllowed() {
-            return Set.of(CONCLUIDA);
+            return Set.of();
         }
     },
     CONCLUIDA {

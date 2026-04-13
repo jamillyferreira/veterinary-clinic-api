@@ -31,10 +31,17 @@ public class Appointment {
     private Pet pet;
 
     @Column(nullable = false)
-    private OffsetDateTime scheduledAt;
+    private LocalDateTime scheduledAt;
 
     @Column(nullable = false)
     private String reason;
+
+    @Column
+    private String diagnosis;
+
+    @Column
+    @Lob
+    private String observations;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status = AppointmentStatus.AGENDADA;

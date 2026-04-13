@@ -1,16 +1,17 @@
 package com.jamillyferreira.veterinaryclinic.repository;
 
 import com.jamillyferreira.veterinaryclinic.entity.Appointment;
-import com.jamillyferreira.veterinaryclinic.entity.Pet;
 import com.jamillyferreira.veterinaryclinic.enums.AppointmentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
+
 import java.util.List;
 
-public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+public interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
     boolean existsByPetId(Long petId);
 
     @Query("""
@@ -22,13 +23,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             """)
     boolean existsConflictingAppointment(
             @Param("veterinaryId") Long veterinaryId,
-            @Param("start") OffsetDateTime start,
-            @Param("end") OffsetDateTime end
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
     );
 
-    List<Appointment> findByPetId(Long petId);
-
-    List<Appointment> findByVeterinaryId(Long veterinaryId);
-
-    List<Appointment> findByStatus(AppointmentStatus status);
 }
