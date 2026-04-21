@@ -6,6 +6,7 @@ import com.jamillyferreira.veterinaryclinic.dto.veterinary.VeterinaryUpdateDTO;
 import com.jamillyferreira.veterinaryclinic.entity.Veterinary;
 import com.jamillyferreira.veterinaryclinic.enums.Specialty;
 import com.jamillyferreira.veterinaryclinic.exception.BusinessException;
+import com.jamillyferreira.veterinaryclinic.exception.ConflictException;
 import com.jamillyferreira.veterinaryclinic.exception.DuplicateResourceException;
 import com.jamillyferreira.veterinaryclinic.exception.ResourceNotFoundException;
 import com.jamillyferreira.veterinaryclinic.mapper.VeterinaryMapper;
@@ -59,7 +60,8 @@ public class VeterinaryService {
     }
 
     public VeterinaryResponseDTO update(Long id, VeterinaryUpdateDTO dto) {
-        log.info("Atualizado veterinário ID: {}", id);
+        log.info("Atualizando veterinário com ID: {}", id);
+
         Veterinary veterinary = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Veterinário não encontrado com ID: " + id)
                 );
@@ -76,9 +78,10 @@ public class VeterinaryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Veterinário não encontrado com ID: " + id)
                 );
         if (!veterinary.isActive()) {
-            throw new BusinessException("Veterinário já está inativo");
+            throw new ConflictException("Veterinário já está inativo");
         }
         veterinary.setActive(false);
+        repository.save(veterinary);
     }
 
     public void activate(Long id) {
@@ -86,9 +89,10 @@ public class VeterinaryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Veterinário não encontrado com ID: " + id)
                 );
         if (veterinary.isActive()) {
-            throw new BusinessException("Veterinário já está ativo");
+            throw new ConflictException("Veterinário já está ativo");
         }
         veterinary.setActive(true);
+        repository.save(veterinary);
     }
 
 }
