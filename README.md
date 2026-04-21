@@ -1,7 +1,7 @@
 # API REST - Clínica 
 
 API REST para gerenciamento de uma clínica veterinária, desenvolvida com Java e Spring Boot.
-Permite o cadastro e gerenciamento de tutores, pets, veterinários e consultas com regras de negócio reais como controle de conflito de horários efluxo de status de atendimento.
+Permite o cadastro e gerenciamento de tutores, pets, veterinários e consultas com regras de negócio reais como controle de conflito de horários e fluxo de status de atendimento.
 
 ## Tecnologias utilizadas
 
@@ -28,7 +28,7 @@ cd veterinary-clinic-api
 
 * A API estará disponível em: http://localhost:8080 
 * O console do H2 pode ser acessado em: http://localhost:8080/h2-console
-* A documentação interativa (Swagger UI) pode ser acessada em: http://localhost:8080/swagger-ui.html
+* A documentação interativa (Swagger UI) pode ser acessada em: http://localhost:8080/scalar
 
 ---
 
@@ -63,14 +63,14 @@ Obs: Listrar todos os pets possui filtro por tutor opcional
 
 ### Veterinários
 
-| Método | Endpoint                      | Descrição                            | Status Code   |
-|--------|-------------------------------|--------------------------------------|---------------|
-| POST   | `/veterinary`                 | Cadastrar veterinário                | 201, 400, 422 |
-| GET    | `/veterinary`                 | Listar todos os veterinário          | 200           |
-| GET    | `/veterinary/{id}`            | Buscar veterinário por ID            | 200, 404      |
-| PATCH  | `/veterinary/{id}`            | Atualizar veterinário (parcialmente) | 200, 400, 404 |
-| PATCH  | `/veterinary/{id}/activate`   | Ativar veterinário                   | 204, 404      |
-| PATCH  | `/veterinary/{id}/deactivate` | Desativar veterinário                | 204, 404      |
+| Método | Endpoint                         | Descrição                            | Status Code   |
+|--------|----------------------------------|--------------------------------------|---------------|
+| POST   | `/veterinarians`                 | Cadastrar veterinário                | 201, 400, 422 |
+| GET    | `/veterinarians`                 | Listar todos os veterinário          | 200           |
+| GET    | `/veterinarians/{id}`            | Buscar veterinário por ID            | 200, 404      |
+| PATCH  | `/veterinarians/{id}`            | Atualizar veterinário (parcialmente) | 200, 400, 404 |
+| PATCH  | `/veterinarians/{id}/activate`   | Ativar veterinário                   | 204, 404      |
+| PATCH  | `/veterinarians/{id}/deactivate` | Desativar veterinário                | 204, 404      |
 
 ---
 
@@ -152,22 +152,6 @@ Entendi a diferença entre validar formato e presença de dados com `@Valid` no 
 
 Pratiquei `@OneToMany` e `@ManyToOne` e comecei a entender as implicações de carregamento lazy vs eager no comportamento das queries.
 
-
----
-## Estrutura do projeto
-
-```mermaid
-src/
-└── main/
-    └── java/
-        └── com/vetclinic/
-            ├── controller/
-            ├── service/
-            ├── repository/
-            ├── model/
-            ├── dto/
-            └── exception/
-```
 ---
 
 ## Autora
