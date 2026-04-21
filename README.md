@@ -13,6 +13,11 @@ Permite o cadastro e gerenciamento de tutores, pets, veterinários e consultas c
 * H2 Database
 * Maven
 
+---
+## Modelagem
+
+![clinicVet.drawio.svg](./clinicVet.drawio.svg)
+
 ## Como executar
 
 ```shell
@@ -39,11 +44,11 @@ cd veterinary-clinic-api
 | Método | Endpoint            | Descrição                      | Status Code   |
 |--------|---------------------|--------------------------------|---------------|
 | POST   | `/tutors`           | Cadastrar novo tutor           | 201, 400, 409 |
-| GET    | `/tutors`           | Listar todos os tutores        | 200, 500      |
+| GET    | `/tutors`           | Listar todos os tutores        | 200,          |
 | GET    | `/tutors/{id}`      | Buscar tutor por ID            | 200, 404      |
 | GET    | `/tutors/cpf/{cpf}` | Buscar tutor por CPF           | 200, 404      |
 | PATCH  | `/tutors/{id}`      | Atualizar tutor (parcialmente) | 200, 400, 404 |
-| DELETE | `/tutors/{id}`      | Remover tutor                  | 204, 404, 500 |
+| DELETE | `/tutors/{id}`      | Remover tutor                  | 204, 404,     |
 
 ---
 
