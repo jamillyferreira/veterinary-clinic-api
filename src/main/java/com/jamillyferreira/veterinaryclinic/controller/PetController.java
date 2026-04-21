@@ -23,21 +23,20 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pets")
-@Tag(name = "Pets", description = "Gerenciamente de Pets")
+@Tag(name = "Pets", description = "Gerenciamento de Pets")
 public class PetController {
     private final PetService petService;
 
-    @Operation(summary = "Criar pet",
-            description = "Cria um novo pet vinculado a um tutor existente." +
+    @Operation(summary = "Cadastrar pet",
+            description = "Cadastra um novo pet vinculado a um tutor existente. " +
                     "O tutor deve estar previamente cadastrado no sistema.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Pet criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro de validação no corpo da requisição"),
-            @ApiResponse(responseCode = "404", description = "Tutor não encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno inesperado no servidor")
+            @ApiResponse(responseCode = "201", description = "Pet cadastrado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Erro de validação no corpo da requisição."),
+            @ApiResponse(responseCode = "404", description = "Tutor não encontrado."),
     })
     @PostMapping
-    public ResponseEntity<PetResponseDTO> create(@Valid @RequestBody PetCreateDTO dto) {
+    public ResponseEntity<PetResponseDTO> create(@RequestBody @Valid PetCreateDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(petService.create(dto));
     }
 
@@ -45,9 +44,8 @@ public class PetController {
             description = "Retorna uma lista completa de pets cadastrados no sistema. " +
                     "Pode filtrar pelos pets de um tutor específico passando o tutorId como parâmetro opcional.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de pets retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Tutor não encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno inesperado no servidor")
+            @ApiResponse(responseCode = "200", description = "Lista de pets retornada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Tutor não encontrado."),
     })
     @GetMapping
     public ResponseEntity<List<PetResponseDTO>> findAll(
@@ -61,13 +59,11 @@ public class PetController {
         return ResponseEntity.ok(petService.findAll());
     }
 
-    @Operation(summary = "Buscar pet por ID",
+    @Operation(summary = "Buscar pet",
             description = "Retorna os dados de um pet específico com base no ID informado.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Pet encontrado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Pet não encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno inesperado no servidor")
-
+            @ApiResponse(responseCode = "200", description = "Pet retornado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Pet não encontrado."),
     })
     @GetMapping("/{id}")
     public ResponseEntity<PetResponseDTO> findById(
@@ -76,19 +72,23 @@ public class PetController {
         return ResponseEntity.ok(petService.findById(id));
     }
 
-    @Operation(summary = "Atualizar pet parcialmente")
+    @Operation(summary = "Atualizar pet", description = "Atualiza dos dados de um pet parcialmente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pet atualizado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Erro de validação no corpo da requisição."),
+            @ApiResponse(responseCode = "404", description = "Pet não encontrado."),
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<PetResponseDTO> update(
             @Parameter(description = "ID do Pet", required = true)
-            @PathVariable Long id, @Valid @RequestBody PetUpdateDTO dto) {
+            @PathVariable Long id, @RequestBody @Valid PetUpdateDTO dto) {
         return ResponseEntity.ok(petService.update(id, dto));
     }
 
-    @Operation(summary = "Deleter pet por ID", description = "Remove um pet do sistema baseado pelo ID informado.")
+    @Operation(summary = "Deletar pet", description = "Remove um pet do sistema baseado pelo ID informado.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Deletado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Pet não encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno inesperado no servidor")
+            @ApiResponse(responseCode = "204", description = "Deletado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Pet não encontrado.")
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
